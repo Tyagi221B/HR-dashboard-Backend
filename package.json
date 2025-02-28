@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "A test for the company PSquare",
+  "keywords": [
+    "backend",
+    "nodejs",
+    "mongoose"
+  ],
+  "license": "ISC",
+  "author": "asmittyagi.dev@gmail.com",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.2"
+  }
+}
