@@ -22,10 +22,12 @@ app.use(cookieParser());
 import healthcheckRouter from './routes/healthcheck.routes.js'; 
 import uploadRoutes from './routes/upload.routes.js';
 import userRoutes from './routes/user.routes.js';
+import candidateRoutes from './routes/cdd.routes.js';
 
 app.use('/api/v1/healthcheck', healthcheckRouter);
 app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/candidate", candidateRoutes);
 
 
 

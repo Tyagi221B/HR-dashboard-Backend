@@ -34,8 +34,7 @@ const candidateSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'interviewed', 'selected', 'rejected'],
-      default: 'pending',
+      default: 'Pending',
     },
     department: {
       type: String,
