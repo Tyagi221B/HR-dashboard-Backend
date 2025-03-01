@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const candidateSchema = new Schema(
   {
-    name: {
+    fullName: {
       type: String,
       required: [true, "Please provide a name"],
       trim: true,
@@ -28,7 +28,7 @@ const candidateSchema = new Schema(
       type: Number,
       default: 0,
     },
-    resume: {
+    resumePublicId: {
       type: String,
       required: [true, 'Please provide candidate resume'],
     },
@@ -36,6 +36,14 @@ const candidateSchema = new Schema(
       type: String,
       enum: ['pending', 'interviewed', 'selected', 'rejected'],
       default: 'pending',
+    },
+    department: {
+      type: String,
+      required: [true, 'Please provide department'],
+    },
+    dateOfJoining:{
+      type: Date,
+      required: [true, 'Please provide date of joining'],
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
