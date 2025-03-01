@@ -1,9 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
-    name: {
+    fullName: {
       type: String,
       required: [true, "Please provide a name"],
       trim: true,
@@ -25,7 +26,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Please provide a password"],
       minlength: [6, "Password must be at least 6 characters"],
-      select: false,
     },
     role: {
       type: String,
@@ -36,6 +36,9 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    refreshToken: {
+      type: String,
+    }
   },
   { timestamps: true }
 );
@@ -53,9 +56,10 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = function () {
+
   return jwt.sign(
     {
-      _id: this._id,
+      _id: this._id.toString(),
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
@@ -65,9 +69,10 @@ userSchema.methods.generateAccessToken = function () {
 };
 
 userSchema.methods.generateRefreshToken = function () {
+  
   return jwt.sign(
     {
-      _id: this._id,
+      _id: this._id.toString(),
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
@@ -75,5 +80,6 @@ userSchema.methods.generateRefreshToken = function () {
     }
   );
 };
+
 
 export const User = mongoose.model("User", userSchema);
