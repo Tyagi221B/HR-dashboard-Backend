@@ -74,7 +74,6 @@ export const addCandidate = asyncHandler(async (req, res) => {
     );
 });
 
-
 export const getAllCandidates = asyncHandler(async (req, res) => {
   const candidates = await Candidate.find()
 
@@ -135,6 +134,20 @@ try {
 
 }
 
+export const getResume = asyncHandler(async (req, res) => {
+
+  const { id } = req.params;
+  
+  const candidate = await Candidate.findById(id);
+  
+  if (!candidate || !candidate.resumePublicId) {
+    throw new ApiError(404, "Resume not found");
+  }
+
+  const resumeUrl = `https://res.cloudinary.com/asmitdemocloud/image/upload/${candidate.resumePublicId}.pdf`;
+
+  res.status(200).json(new ApiResponse(200, { resumeUrl }, "Resume retrieved successfully"));
+});
 
 export const updateCandidate = asyncHandler(async (req, res) => {
 
