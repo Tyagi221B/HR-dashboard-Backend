@@ -15,7 +15,7 @@ export const addCandidate = asyncHandler(async (req, res) => {
     dateOfJoining,
   } = req.body;
 
-  console.log(req.user._id);
+  console.log(req.body);
 
   
   if (
@@ -76,9 +76,11 @@ export const addCandidate = asyncHandler(async (req, res) => {
 
 
 export const getAllCandidates = asyncHandler(async (req, res) => {
-  const candidates = await Candidate.find().populate("createdBy", "fullName email");
-  
-  return res.status(200).json(new ApiResponse(200, "Candidates retrieved successfully", candidates));
+  const candidates = await Candidate.find()
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, candidates ,"Candidates retrieved successfully"));
 });
 
 export const deleteCandidate = asyncHandler(async (req, res) => {

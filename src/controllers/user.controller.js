@@ -105,6 +105,8 @@ export const loginUser = asyncHandler(
 );
 
 export const refreshAccessToken = asyncHandler(async (req, res) => {
+  
+  console.log("Refreshing access token", req.body.accessToken)
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
 
@@ -120,12 +122,8 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const user = await User.findById(decodedToken?._id);
 
-    if (!user) {
-      throw new ApiError(401, "Invalid Refresh Token");
-    }
-
-    if (incomingRefreshToken !== user?.refreshToken) {
-      throw new ApiError(401, "Refresh Token is expired");
+    if (!user || incomingRefreshToken !== user?.refreshToken) {
+      throw new ApiError(401, "Invalid or expired Refresh Token");
     }
 
     const options = {
@@ -153,7 +151,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   } catch (error) {
     throw new ApiError(
       500,
-      "Something went wrong while refreshing access token."
+      "Error refreshing access token."
     );
   }
 });
@@ -183,3 +181,25 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 });
 
+export const currentUser = asyncHandler(async (req, res) => {
+
+  // console.log(req.user)
+
+  try {
+    if (!req.user) {
+      throw new ApiError(401, "User is not authenticated");
+    }
+  
+    const currentUser = await User.findById(req.user._id).select("-password -refreshToken");
+  
+    if (!currentUser) {
+      throw new ApiError(500, "Something went wrong while retrieving current user");
+    }
+  
+    return res.json(new ApiResponse(200, "Current User", currentUser));
+  } catch (error) {
+      throw new ApiError(500, "Something went wrong while retrieving current user " + error.message); 
+
+  }
+
+})

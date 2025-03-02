@@ -34,7 +34,7 @@ const candidateSchema = new Schema(
     },
     status: {
       type: String,
-      default: 'Pending',
+      default: 'New',
     },
     department: {
       type: String,
