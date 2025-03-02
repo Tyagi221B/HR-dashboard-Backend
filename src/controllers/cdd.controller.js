@@ -92,7 +92,6 @@ export const deleteCandidate = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Candidate not found");
   }
   
-  // Ensure only the user who created the candidate can delete
   if (candidate.createdBy.toString() !== req.user._id.toString()) {
     throw new ApiError(403, "Unauthorized to delete this candidate");
   }
@@ -137,7 +136,6 @@ try {
 }
 
 
-// No nee right now - not in the requirement 
 export const updateCandidate = asyncHandler(async (req, res) => {
 
   // TODO: FIX This -- no need right now
@@ -150,7 +148,6 @@ export const updateCandidate = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Candidate not found");
   }
 
-  // Ensure only the user who created the candidate can update
   if (candidate.createdBy.toString() !== req.user._id.toString()) {
     throw new ApiError(403, "Unauthorized to update this candidate");
   }
