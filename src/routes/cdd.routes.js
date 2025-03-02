@@ -24,6 +24,6 @@ router.put("/status/:id", verifyJWT, updateCandidateStatus);
 
 
 // No need right now 
-router.put("/update/:id", verifyJWT, updateCandidate);
+router.put("/update/:id", verifyJWT, upload.single("pdfFile"), updateCandidate);
 
 export default router;

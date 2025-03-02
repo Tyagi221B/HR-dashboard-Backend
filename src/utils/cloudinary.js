@@ -30,7 +30,13 @@ const deleteFromCloudinary = async (publicId) => {
   try {
     if (!publicId) return null;
     const response = await cloudinary.uploader.destroy(publicId);
-    console.log("File deleted from Cloudinary. File src: ", response.url);
+
+    if (response.result === "ok") {
+      console.log(`File deleted from Cloudinary. Public ID: ${publicId}`);
+    } else {
+      console.warn(`File not found or already deleted. Public ID: ${publicId}`);
+    }
+
     return response;
   } catch (error) {
     console.log("Error deleting file from Cloudinary: ", error);
@@ -38,4 +44,4 @@ const deleteFromCloudinary = async (publicId) => {
   }
 };
 
-export { uploadOnCloudinary , deleteFromCloudinary};
+export { uploadOnCloudinary, deleteFromCloudinary };
