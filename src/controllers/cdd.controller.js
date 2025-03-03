@@ -19,7 +19,7 @@ export const addCandidate = asyncHandler(async (req, res) => {
     dateOfJoining,
   } = req.body;
 
-  console.log(req.body);
+  // console.log(req.body);
 
   if (
     [fullName, email, phone, position, experience, department].some(
