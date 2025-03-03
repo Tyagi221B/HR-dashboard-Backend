@@ -1,8 +1,12 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Candidate } from "../models/candidate.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteFromCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiError } from "../utils/ApiError.js";
+import { Employee } from "../models/employee.model.js";
 
 export const addCandidate = asyncHandler(async (req, res) => {
   const {
@@ -34,7 +38,7 @@ export const addCandidate = asyncHandler(async (req, res) => {
   if (!dateOfJoining) {
     throw new ApiError(400, "Please provide date of joining");
   }
-  console.log(req.file);
+  // console.log(req.file);
 
   const resumeFileLocalPath = req.file;
 
@@ -103,45 +107,45 @@ export const deleteCandidate = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Candidate deleted successfully"));
 });
 
-export const updateCandidateStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
+// export const updateCandidateStatus = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
+//   const { status } = req.body;
 
-  if (!id) {
-    throw new ApiError(400, "Candidate ID is required");
-  }
+//   if (!id) {
+//     throw new ApiError(400, "Candidate ID is required");
+//   }
 
-  if (!status) {
-    throw new ApiError(400, "Status is required");
-  }
-  
-  try {
-    const candidate = await Candidate.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+//   if (!status) {
+//     throw new ApiError(400, "Status is required");
+//   }
 
-    if (!candidate) {
-      throw new ApiError(
-        500,
-        "Something went wrong while updating candidate status"
-      );
-    }
+//   try {
+//     const candidate = await Candidate.findByIdAndUpdate(
+//       id,
+//       { status },
+//       { new: true }
+//     );
 
-    return res
-      .status(201)
-      .json(
-        new ApiResponse(
-          201,
-          "Candidate status updated succesfully",
-          candidate.status
-        )
-      );
-  } catch (error) {
-    throw new ApiError(500, "Error in updating candidate status", error);
-  }
-});
+//     if (!candidate) {
+//       throw new ApiError(
+//         500,
+//         "Something went wrong while updating candidate status"
+//       );
+//     }
+
+//     return res
+//       .status(201)
+//       .json(
+//         new ApiResponse(
+//           201,
+//           "Candidate status updated succesfully",
+//           candidate.status
+//         )
+//       );
+//   } catch (error) {
+//     throw new ApiError(500, "Error in updating candidate status", error);
+//   }
+// });
 
 export const getResume = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -160,9 +164,6 @@ export const getResume = asyncHandler(async (req, res) => {
 });
 
 export const updateCandidate = asyncHandler(async (req, res) => {
-
-  console.log("Received request body:", req.body);
-
   const { id } = req.params;
   const {
     fullName,
@@ -173,8 +174,6 @@ export const updateCandidate = asyncHandler(async (req, res) => {
     department,
     dateOfJoining,
   } = req.body;
-
-  console.log(fullName, email, phone, position, experience, department, dateOfJoining)
 
   const candidate = await Candidate.findById(id);
   if (!candidate) {
@@ -206,7 +205,9 @@ export const updateCandidate = asyncHandler(async (req, res) => {
   candidate.position = position ?? candidate.position;
   candidate.experience = experience ?? candidate.experience;
   candidate.department = department ?? candidate.department;
-  candidate.dateOfJoining = dateOfJoining ? new Date(dateOfJoining) : candidate.dateOfJoining;
+  candidate.dateOfJoining = dateOfJoining
+    ? new Date(dateOfJoining)
+    : candidate.dateOfJoining;
   candidate.resumePublicId = resumePublicId;
 
   await candidate.save();
@@ -214,4 +215,62 @@ export const updateCandidate = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, "Candidate updated successfully", candidate));
+});
+
+export const updateCandidateStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  if (!id) {
+    throw new ApiError(400, "Candidate ID is required");
+  }
+
+  if (!status) {
+    throw new ApiError(400, "Status is required");
+  }
+
+  try {
+    const candidate = await Candidate.findById(id);
+
+    if (!candidate) {
+      throw new ApiError(404, "Candidate not found");
+    }
+
+    if (status === "Selected" && candidate.status !== "Selected") {
+      const newEmployee = new Employee({
+        fullName: candidate.fullName,
+        email: candidate.email,
+        phone: candidate.phone,
+        position: candidate.position,
+        experience: candidate.experience,
+        resumePublicId: candidate.resumePublicId,
+        department: candidate.department,
+        dateOfJoining: candidate.dateOfJoining,
+        salary: 0,
+        candidateId: candidate._id,
+        createdBy: candidate.createdBy,
+        attendance: [],
+      });
+
+      await newEmployee.save();
+
+      // await Candidate.findByIdAndDelete(id);
+    }
+
+    candidate.status = status;
+    await candidate.save();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          status === "Selected"
+            ? "Candidate selected and moved to employees"
+            : "Candidate status updated successfully",
+          { status: candidate.status }
+        )
+      );
+  } catch (error) {
+    throw new ApiError(500, "Error in updating candidate status", error);
+  }
 });
