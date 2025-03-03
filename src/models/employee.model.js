@@ -57,6 +57,10 @@ const employeeSchema = new Schema(
         enum: ['Present', 'Absent'],
         default: 'Present'
       },
+      task: {
+        type: String,
+        default: ""
+      },
       _id: false
     }],
     createdBy: {

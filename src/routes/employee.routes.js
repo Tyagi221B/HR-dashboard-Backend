@@ -19,7 +19,7 @@ router.route("/:id").get(getEmployeeById);
 router.put("/update/:id", verifyJWT, upload.single("pdfFile"), updateEmployee);
 router.route("/delete/:id").delete(deleteEmployee);
 
-router.route("/:id/attendance").post(markAttendance);
-router.route("/:id/attendance").get(getEmployeeAttendance);
+router.route("/attendance/:id").post(markAttendance);
+router.route("/attendance/:id").get(getEmployeeAttendance);
 
 export default router;

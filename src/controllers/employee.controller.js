@@ -112,7 +112,7 @@ export const deleteEmployee = asyncHandler(async (req, res) => {
 
 export const markAttendance = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { date, status } = req.body;
+  const { date, status, task } = req.body;
   
   if (!date) {
     throw new ApiError(400, "Date is required");
@@ -123,7 +123,6 @@ export const markAttendance = asyncHandler(async (req, res) => {
   }
   
   const attendanceDate = new Date(date);
-  // Set time to beginning of day to avoid time comparison issues
   attendanceDate.setHours(0, 0, 0, 0);
   
   const employee = await Employee.findById(id);
@@ -132,20 +131,30 @@ export const markAttendance = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Employee not found");
   }
   
-  // Check if attendance for this date already exists
   const existingAttendanceIndex = employee.attendance.findIndex(
     a => new Date(a.date).setHours(0, 0, 0, 0) === attendanceDate.getTime()
   );
   
   if (existingAttendanceIndex !== -1) {
-    // Update existing attendance
     employee.attendance[existingAttendanceIndex].status = status;
+    if (task !== undefined) {
+      if (!employee.attendance[existingAttendanceIndex].task) {
+        employee.attendance[existingAttendanceIndex].task = task;
+      } else {
+        employee.attendance[existingAttendanceIndex].task = task;
+      }
+    }
   } else {
-    // Add new attendance record
-    employee.attendance.push({
+    const newAttendance = {
       date: attendanceDate,
       status
-    });
+    };
+    
+    if (task !== undefined) {
+      newAttendance.task = task;
+    }
+    
+    employee.attendance.push(newAttendance);
   }
   
   await employee.save();
