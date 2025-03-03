@@ -1,21 +1,32 @@
-import { Router } from "express";
+import express from 'express';
 import { 
-  applyForLeave, 
   getAllLeaves, 
-  getLeaveById, 
-  updateLeaveStatus,
-  getEmployeeLeaves
-} from "../controllers/leave.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+  getLeavesByEmployee, 
+  createLeave, 
+  updateLeaveStatus, 
+  deleteLeave,
+  getLeaveById,
+  getLeaveDocument 
+} from '../controllers/leave.controller.js';
+import { verifyJWT } from '../middlewares/auth.middleware.js';
+import upload from '../middlewares/multer.middleware.js';
 
-const router = Router();
+const router = express.Router();
 
 router.use(verifyJWT);
 
-router.route("/").post(applyForLeave);
-router.route("/").get(getAllLeaves);
-router.route("/:id").get(getLeaveById);
-router.route("/:id/status").patch(updateLeaveStatus);
-router.route("/employee/:employeeId").get(getEmployeeLeaves);
+router.get('/getall', getAllLeaves);
+
+router.get('/employee/:employeeId', getLeavesByEmployee);
+
+router.get('/:id', getLeaveById);
+
+router.post('/add', upload.single('pdfFile'), createLeave);
+
+router.patch('/:id/status', updateLeaveStatus);
+
+router.delete('/:id', deleteLeave);
+
+router.get('/document/:employeeId', getLeaveDocument);
 
 export default router;

@@ -5,34 +5,29 @@ const leaveSchema = new Schema(
     employee: {
       type: mongoose.Types.ObjectId,
       ref: 'Employee',
-      required: [true, 'Please provide employee ID'],
+      required: [true, 'Please provide employee']
     },
-    startDate: {
+    leaveDate: {
       type: Date,
-      required: [true, 'Please provide start date'],
-    },
-    endDate: {
-      type: Date,
-      required: [true, 'Please provide end date'],
+      required: [true, 'Please provide leave date']
     },
     reason: {
       type: String,
-      required: [true, 'Please provide reason for leave'],
+      required: [true, 'Please provide reason for leave']
+    },
+    pdfFile: {
+      type: String, // Cloudinary public ID
     },
     status: {
       type: String,
       enum: ['Pending', 'Approved', 'Rejected'],
-      default: 'Pending',
-    },
-    approvedBy: {
-      type: mongoose.Types.ObjectId,
-      ref: 'User',
+      default: 'Pending'
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
-      required: [true, 'Please provide user'],
-    },
+      required: [true, 'Please provide user']
+    }
   },
   { timestamps: true }
 );

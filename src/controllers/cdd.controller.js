@@ -107,45 +107,6 @@ export const deleteCandidate = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Candidate deleted successfully"));
 });
 
-// export const updateCandidateStatus = asyncHandler(async (req, res) => {
-//   const { id } = req.params;
-//   const { status } = req.body;
-
-//   if (!id) {
-//     throw new ApiError(400, "Candidate ID is required");
-//   }
-
-//   if (!status) {
-//     throw new ApiError(400, "Status is required");
-//   }
-
-//   try {
-//     const candidate = await Candidate.findByIdAndUpdate(
-//       id,
-//       { status },
-//       { new: true }
-//     );
-
-//     if (!candidate) {
-//       throw new ApiError(
-//         500,
-//         "Something went wrong while updating candidate status"
-//       );
-//     }
-
-//     return res
-//       .status(201)
-//       .json(
-//         new ApiResponse(
-//           201,
-//           "Candidate status updated succesfully",
-//           candidate.status
-//         )
-//       );
-//   } catch (error) {
-//     throw new ApiError(500, "Error in updating candidate status", error);
-//   }
-// });
 
 export const getResume = asyncHandler(async (req, res) => {
   const { id } = req.params;
